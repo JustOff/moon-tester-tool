@@ -3,8 +3,10 @@
 var {classes: Cc, interfaces: Ci, utils: Cu} = Components;
 Cu.import("resource://gre/modules/Services.jsm");
 Cu.import("resource://gre/modules/AddonManager.jsm");
+Cu.import("resource://gre/modules/NetUtil.jsm");
+Cu.import("resource://gre/modules/FileUtils.jsm");
 
-var window = null;
+var window = null, tempDir = null;
 
 function installFromFile(aFile) {
 	function doInstall(aInstall) {
@@ -15,7 +17,6 @@ function installFromFile(aFile) {
 							.getInterface(Ci.nsIDocShell).chromeEventHandler;
 		webInstaller.onWebInstallRequested(browserElement, window.document.documentURIObject,
 											installs, installs.length);
-		window = null;
 	}
 
 	AddonManager.getInstallForFile(aFile, function(aInstall) {
@@ -36,9 +37,51 @@ function main(aWindow) {
 		return;
 	}
 
-	var file = fp.file;
+	var srcFile = fp.file;
+
+	var tmpDir = FileUtils.getFile("TmpD", ["moonttool.tmp"]);
+	tmpDir.createUnique(Ci.nsIFile.DIRECTORY_TYPE, FileUtils.PERMS_DIRECTORY);
+	srcFile.copyTo(tmpDir, "test-" + srcFile.leafName);
+	var tmpFile = tmpDir.clone();
+	tmpFile.append("test-" + srcFile.leafName);
+	
 	window = aWindow;
-	installFromFile(file);
+	tempDir = tmpDir.clone();
+	installFromFile(tmpFile);
+}
+
+function clearTemp() {
+	if (tempDir && tempDir.exists()) {
+		try {
+			tempDir.remove(true);
+		} catch(e) {}
+		tempDir = null;
+	}
+	if (window) {
+		window = null;
+	}
+}
+
+var installListener = {
+	onDownloadCancelled: function (aAddonInstall, aAddon) {
+		clearTemp();
+	},
+	
+	onDownloadFailed: function (aAddonInstall, aAddon) {
+		clearTemp();
+	},
+	
+	onInstallEnded: function (aAddonInstall, aAddon) {
+		clearTemp();
+	},
+	
+	onInstallCancelled: function (aAddonInstall, aAddon) {
+		clearTemp();
+	},
+	
+	onInstallFailed: function (aAddonInstall, aAddon) {
+		clearTemp();
+	}
 }
 
 var moonttoolObserver = {
@@ -50,6 +93,7 @@ var moonttoolObserver = {
 };
 
 function startup(data, reason) {
+	AddonManager.addInstallListener(installListener);
 	Services.obs.addObserver(moonttoolObserver, "moonttoolEvent", false);
 }
 
@@ -58,6 +102,7 @@ function shutdown(data, reason) {
 
 	window = null;
 	Services.obs.removeObserver(moonttoolObserver, "moonttoolEvent");
+	AddonManager.removeInstallListener(installListener);
 }
 
 function install() {};

@@ -6,6 +6,7 @@ Cu.import("resource://gre/modules/AddonManager.jsm");
 Cu.import("resource://gre/modules/NetUtil.jsm");
 Cu.import("resource://gre/modules/FileUtils.jsm");
 
+const pr = {PR_RDONLY: 0x01, PR_WRONLY: 0x02, PR_RDWR: 0x04, PR_CREATE_FILE: 0x08, PR_APPEND: 0x10, PR_TRUNCATE: 0x20};
 var window = null, tempDir = null;
 
 function installFromFile(aFile) {
@@ -41,13 +42,49 @@ function main(aWindow) {
 
 	var tmpDir = FileUtils.getFile("TmpD", ["moonttool.tmp"]);
 	tmpDir.createUnique(Ci.nsIFile.DIRECTORY_TYPE, FileUtils.PERMS_DIRECTORY);
-	srcFile.copyTo(tmpDir, "test-" + srcFile.leafName);
-	var tmpFile = tmpDir.clone();
-	tmpFile.append("test-" + srcFile.leafName);
-	
-	window = aWindow;
 	tempDir = tmpDir.clone();
-	installFromFile(tmpFile);
+	var instName = "install.rdf";
+
+	try {
+		srcFile.copyTo(tmpDir, "test-" + srcFile.leafName);
+		var tmpFile = tmpDir.clone();
+		tmpFile.append("test-" + srcFile.leafName);
+	
+		var zr = Cc["@mozilla.org/libjar/zip-reader;1"].createInstance(Ci.nsIZipReader);
+		zr.open(tmpFile);
+	
+		if (!zr.hasEntry(instName)) {
+			alert("Invalid XPI file!");
+			zr.close();
+			throw "Invalid XPI";
+		}
+	
+		var instFile = zr.getEntry(instName);
+		var inputStream = zr.getInputStream(instName);
+		var sis = Cc['@mozilla.org/scriptableinputstream;1'].createInstance(Ci.nsIScriptableInputStream);
+		sis.init(inputStream);
+		var instData = sis.read(instFile.realSize);
+		Cu.reportError(instData);
+		sis.close();
+		zr.close();
+		
+		var converter = Cc["@mozilla.org/intl/scriptableunicodeconverter"]
+						.createInstance(Ci.nsIScriptableUnicodeConverter);
+		converter.charset = "UTF-8";
+		inputStream = converter.convertToInputStream(instData);
+		
+		var zw = Cc['@mozilla.org/zipwriter;1'].createInstance(Ci.nsIZipWriter);
+		zw.open(tmpFile, pr.PR_RDWR);
+		zw.removeEntry(instName, false);
+		zw.addEntryStream(instName, Date.now(), Ci.nsIZipWriter.COMPRESSION_DEFAULT, inputStream, false);
+		zw.close();
+
+		window = aWindow;
+		installFromFile(tmpFile);
+	} catch(e) {
+		Cu.reportError(e);
+		clearTemp();
+	}
 }
 
 function clearTemp() {

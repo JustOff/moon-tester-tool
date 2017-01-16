@@ -48,16 +48,20 @@ function main(aWindow) {
 		srcFile.copyTo(tmpDir, "test-" + srcFile.leafName);
 		var tmpFile = tmpDir.clone();
 		tmpFile.append("test-" + srcFile.leafName);
-	
+
 		var zr = Cc["@mozilla.org/libjar/zip-reader;1"].createInstance(Ci.nsIZipReader);
 		zr.open(tmpFile);
-	
+
 		if (!zr.hasEntry(instName)) {
 			alert("Invalid XPI file!");
 			zr.close();
 			throw "Invalid XPI";
 		}
-	
+
+		var metainfs = zr.findEntries("META-INF/*"), metaArr = [];
+		while (metainfs.hasMore()) {
+			metaArr.push(metainfs.getNext());
+		}
 		var instFile = zr.getEntry(instName);
 		var inputStream = zr.getInputStream(instName);
 		var sis = Cc['@mozilla.org/scriptableinputstream;1'].createInstance(Ci.nsIScriptableInputStream);
@@ -65,19 +69,23 @@ function main(aWindow) {
 		var instData = sis.read(instFile.realSize);
 		sis.close();
 		zr.close();
-		
+
 		instData = instData.replace(/<em:targetApplication>[\s\S]+?<\/em:targetApplication>/ig, "");
 		instData = instData.replace(/<em:updateURL>[\s\S]+?<\/em:updateURL>/ig, "");
 		instData = instData.replace(/<em:name>/i, "<em:updateURL>https://localhost/update.xml</em:updateURL><em:targetApplication><Description><em:id>{8de7fcbb-c55c-4fbe-bfc5-fc555c87dbc4}</em:id><em:minVersion>27.0</em:minVersion><em:maxVersion>*</em:maxVersion></Description></em:targetApplication><em:name>[TEST] ");
-//		Cu.reportError(instData);
-		
+
 		var converter = Cc["@mozilla.org/intl/scriptableunicodeconverter"]
 						.createInstance(Ci.nsIScriptableUnicodeConverter);
 		converter.charset = "UTF-8";
 		inputStream = converter.convertToInputStream(instData);
-		
+
 		var zw = Cc['@mozilla.org/zipwriter;1'].createInstance(Ci.nsIZipWriter);
 		zw.open(tmpFile, pr.PR_RDWR);
+		for (var metainf of metaArr) {
+			if (metainf != "META-INF/") {
+				zw.removeEntry(metainf, false);
+			}
+		}
 		zw.removeEntry(instName, false);
 		zw.addEntryStream(instName, Date.now(), Ci.nsIZipWriter.COMPRESSION_DEFAULT, inputStream, false);
 		zw.close();
@@ -106,19 +114,19 @@ var installListener = {
 	onDownloadCancelled: function (aAddonInstall, aAddon) {
 		clearTemp();
 	},
-	
+
 	onDownloadFailed: function (aAddonInstall, aAddon) {
 		clearTemp();
 	},
-	
+
 	onInstallEnded: function (aAddonInstall, aAddon) {
 		clearTemp();
 	},
-	
+
 	onInstallCancelled: function (aAddonInstall, aAddon) {
 		clearTemp();
 	},
-	
+
 	onInstallFailed: function (aAddonInstall, aAddon) {
 		clearTemp();
 	}

@@ -6,7 +6,7 @@
 	<em:type>2</em:type>
 	<em:bootstrap>true</em:bootstrap>
 	<em:name>Moon Tester Tool</em:name>
-	<em:description>Force the compatibility of extension with Pale Moon</em:description>
+	<em:description>Tool for testing compatibility of add-ons with Pale Moon. Allows to install any extension, regardless of target application and versions specified in its manifest.</em:description>
 	<em:creator>Off JustOff &lt;Off.Just.Off@gmail.com&gt;</em:creator>
 	<em:updateURL>https://raw.githubusercontent.com/JustOff/moon-tester-tool/gh-pages/update.rdf</em:updateURL>
 	<em:targetApplication>

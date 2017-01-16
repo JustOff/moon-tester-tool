@@ -4,15 +4,18 @@ var {classes: Cc, interfaces: Ci, utils: Cu} = Components;
 Cu.import("resource://gre/modules/Services.jsm");
 Cu.import("resource://gre/modules/AddonManager.jsm");
 
-function installFromFile(aWindow, aFile) {
+var window = null;
+
+function installFromFile(aFile) {
 	function doInstall(aInstall) {
 		var installs = [ aInstall ];
 		var webInstaller = Cc["@mozilla.org/addons/web-install-listener;1"]
 							.getService(Ci.amIWebInstallListener);
-		var browserElement = aWindow.QueryInterface(Ci.nsIInterfaceRequestor)
+		var browserElement = window.QueryInterface(Ci.nsIInterfaceRequestor)
 							.getInterface(Ci.nsIDocShell).chromeEventHandler;
-		webInstaller.onWebInstallRequested(browserElement, aWindow.document.documentURIObject,
+		webInstaller.onWebInstallRequested(browserElement, window.document.documentURIObject,
 											installs, installs.length);
+		window = null;
 	}
 
 	AddonManager.getInstallForFile(aFile, function(aInstall) {
@@ -34,7 +37,8 @@ function main(aWindow) {
 	}
 
 	var file = fp.file;
-	installFromFile(aWindow, file);
+	window = aWindow;
+	installFromFile(file);
 }
 
 var moonttoolObserver = {
@@ -51,7 +55,8 @@ function startup(data, reason) {
 
 function shutdown(data, reason) {
 	if (reason == APP_SHUTDOWN) return;
-	
+
+	window = null;
 	Services.obs.removeObserver(moonttoolObserver, "moonttoolEvent");
 }
 

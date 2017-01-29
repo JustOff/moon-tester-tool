@@ -70,6 +70,7 @@ function main(aWindow) {
 		sis.close();
 		zr.close();
 
+		instData = instData.replace(/^\xEF\xBB\xBF/, "");
 		instData = instData.replace(/<em:targetApplication>[\s\S]+?<\/em:targetApplication>/ig, "");
 		instData = instData.replace(/<em:updateURL>[\s\S]+?<\/em:updateURL>/ig, "");
 		instData = instData.replace(/<em:name>/i, "<em:updateURL>https://localhost/update.xml</em:updateURL><em:targetApplication><Description><em:id>{8de7fcbb-c55c-4fbe-bfc5-fc555c87dbc4}</em:id><em:minVersion>27.0</em:minVersion><em:maxVersion>*</em:maxVersion></Description></em:targetApplication><em:name>[TEST] ");

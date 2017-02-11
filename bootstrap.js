@@ -78,6 +78,39 @@ function main(aWindow) {
 		var converter = Cc["@mozilla.org/intl/scriptableunicodeconverter"]
 						.createInstance(Ci.nsIScriptableUnicodeConverter);
 		converter.charset = "UTF-8";
+
+		var isTheme = /<em:type>4<\/em:type>/.test(instData);
+		if (isTheme) {
+			instData = instData.replace("[TEST]", "[FIX]");
+			var cssFix = "chrome/browser/statusbar/overlay.css";
+			var cssData = `@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+
+#urlbar .urlbar-over-link-layer
+{
+	opacity: 0;
+}
+
+#urlbar .urlbar-over-link-layer[overlinkstate="fade-in"]
+{
+	-moz-transition-property: opacity;
+	-moz-transition-duration: 150ms;
+	opacity: 1;
+}
+
+#urlbar .urlbar-over-link-layer[overlinkstate="fade-out"]
+{
+	-moz-transition-property: opacity;
+	-moz-transition-duration: 150ms;
+	-moz-transition-timing-function: cubic-bezier(0.0, 1.0, 1.0, 1.0);
+}
+
+#urlbar .urlbar-over-link-layer[overlinkstate="showing"]
+{
+	opacity: 1;
+}`;
+			var cssStream = converter.convertToInputStream(cssData);
+		}
+
 		inputStream = converter.convertToInputStream(instData);
 
 		var zw = Cc['@mozilla.org/zipwriter;1'].createInstance(Ci.nsIZipWriter);
@@ -89,6 +122,9 @@ function main(aWindow) {
 		}
 		zw.removeEntry(instName, false);
 		zw.addEntryStream(instName, Date.now(), Ci.nsIZipWriter.COMPRESSION_DEFAULT, inputStream, false);
+		if (isTheme) {
+			zw.addEntryStream(cssFix, Date.now(), Ci.nsIZipWriter.COMPRESSION_DEFAULT, cssStream, false);
+		}
 		zw.close();
 
 		window = aWindow;

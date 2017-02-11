@@ -2,11 +2,11 @@
 <RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:em="http://www.mozilla.org/2004/em-rdf#">
   <Description about="urn:mozilla:install-manifest">
 	<em:id>moonttool@Off.JustOff</em:id>
-	<em:version>1.0.3</em:version>
+	<em:version>1.0.4</em:version>
 	<em:type>2</em:type>
 	<em:bootstrap>true</em:bootstrap>
 	<em:name>Moon Tester Tool</em:name>
-	<em:description>Allows to install any extension, regardless of target application and versions specified in its manifest.</em:description>
+	<em:description>Allows to install any extension, regardless of target application and versions specified in its manifest. Autocorrect doubled text in Firefox themes.</em:description>
 	<em:creator>Off JustOff &lt;Off.Just.Off@gmail.com&gt;</em:creator>
 	<em:homepageURL>https://github.com/JustOff/moon-tester-tool/</em:homepageURL>
 	<em:targetApplication>

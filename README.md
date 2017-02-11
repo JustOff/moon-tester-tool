@@ -1,4 +1,4 @@
-**Moon Tester Tool** is designed for testing compatibility of add-ons with **Pale Moon** and autocorrect doubled text in Firefox themes. It allows to install any extension or theme, regardless of target application and versions specified in its manifest. The extensions installed via **Moon Tester Tool** are marked with **[TEST]** (or **[FIX]** for themes) at the beginning of the name and can't be updated automatically.
+**Moon Tester Tool** is designed for testing compatibility of add-ons with **Pale Moon** and autocorrect [doubled text in Firefox themes](https://forum.palemoon.org/viewtopic.php?f=45&t=14082). It allows to install any extension or theme, regardless of target application and versions specified in its manifest. The extensions installed via **Moon Tester Tool** are marked with **[TEST]** (or **[FIX]** for themes) at the beginning of the name and can't be updated automatically.
 
 ##### Warning! Moon Tester Tool is intended for advanced users and for test purposes only!
 

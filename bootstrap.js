@@ -43,6 +43,7 @@ function main(aWindow) {
 	tmpDir.createUnique(Ci.nsIFile.DIRECTORY_TYPE, FileUtils.PERMS_DIRECTORY);
 	tempDir = tmpDir.clone();
 	var instName = "install.rdf";
+	var manifestName = "chrome.manifest";
 
 	try {
 		srcFile.copyTo(tmpDir, "test-" + srcFile.leafName);
@@ -62,22 +63,38 @@ function main(aWindow) {
 		while (metainfs.hasMore()) {
 			metaArr.push(metainfs.getNext());
 		}
+
+		var converter = Cc["@mozilla.org/intl/scriptableunicodeconverter"]
+						.createInstance(Ci.nsIScriptableUnicodeConverter);
+		converter.charset = "UTF-8";
+
 		var instFile = zr.getEntry(instName);
 		var inputStream = zr.getInputStream(instName);
 		var sis = Cc['@mozilla.org/scriptableinputstream;1'].createInstance(Ci.nsIScriptableInputStream);
 		sis.init(inputStream);
 		var instData = sis.read(instFile.realSize);
 		sis.close();
+
+		var manifestStream, hasManifest = zr.hasEntry(manifestName);
+		if (hasManifest) {
+			var manifestFile = zr.getEntry(manifestName);
+			inputStream = zr.getInputStream(manifestName);
+			sis.init(inputStream);
+			var manifestData = sis.read(manifestFile.realSize);
+			sis.close();
+
+			manifestData = manifestData.replace(/^\xEF\xBB\xBF/, "");
+			manifestData = manifestData.replace(/\{ec8030f7\-c20a\-464f\-9b0e\-13a3a9e97384\}/gi,
+												"{8de7fcbb-c55c-4fbe-bfc5-fc555c87dbc4}");
+
+			manifestStream = converter.convertToInputStream(manifestData);
+		}
 		zr.close();
 
 		instData = instData.replace(/^\xEF\xBB\xBF/, "");
 		instData = instData.replace(/<em:targetApplication>[\s\S]+?<\/em:targetApplication>/ig, "");
 		instData = instData.replace(/<em:updateURL>[\s\S]+?<\/em:updateURL>/ig, "");
 		instData = instData.replace(/<em:name>/i, "<em:updateURL>https://localhost/update.xml</em:updateURL><em:targetApplication><Description><em:id>{8de7fcbb-c55c-4fbe-bfc5-fc555c87dbc4}</em:id><em:minVersion>27.0</em:minVersion><em:maxVersion>*</em:maxVersion></Description></em:targetApplication><em:name>[TEST] ");
-
-		var converter = Cc["@mozilla.org/intl/scriptableunicodeconverter"]
-						.createInstance(Ci.nsIScriptableUnicodeConverter);
-		converter.charset = "UTF-8";
 
 		var isTheme = /<em:type>4<\/em:type>/.test(instData);
 		if (isTheme) {
@@ -124,6 +141,10 @@ function main(aWindow) {
 		zw.addEntryStream(instName, Date.now(), Ci.nsIZipWriter.COMPRESSION_DEFAULT, inputStream, false);
 		if (isTheme) {
 			zw.addEntryStream(cssFix, Date.now(), Ci.nsIZipWriter.COMPRESSION_DEFAULT, cssStream, false);
+		}
+		if (hasManifest) {
+			zw.removeEntry(manifestName, false);
+			zw.addEntryStream(manifestName, Date.now(), Ci.nsIZipWriter.COMPRESSION_DEFAULT, manifestStream, false);
 		}
 		zw.close();
 

@@ -1,0 +1,7 @@
+@namespace url(http://www.w3.org/1999/xhtml);
+@-moz-document domain("addons.mozilla.org"){
+  .button.concealed {
+    cursor: pointer !important;
+    pointer-events: auto !important;
+  }
+}

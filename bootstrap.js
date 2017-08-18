@@ -8,6 +8,9 @@ Cu.import("resource://gre/modules/FileUtils.jsm");
 const pr = {PR_RDONLY: 0x01, PR_WRONLY: 0x02, PR_RDWR: 0x04, PR_CREATE_FILE: 0x08, PR_APPEND: 0x10, PR_TRUNCATE: 0x20};
 var window = null, tempDir = null;
 
+var styleSheetService = Cc["@mozilla.org/content/style-sheet-service;1"].getService(Ci.nsIStyleSheetService);
+var amoCSS = Services.io.newURI("chrome://moonttool/content/amo.css", null, null);
+
 function installFromFile(aFile) {
 	function doInstall(aInstall) {
 		var installs = [ aInstall ];
@@ -201,6 +204,10 @@ var moonttoolObserver = {
 function startup(data, reason) {
 	AddonManager.addInstallListener(installListener);
 	Services.obs.addObserver(moonttoolObserver, "moonttoolEvent", false);
+
+	if (!styleSheetService.sheetRegistered(amoCSS, styleSheetService.USER_SHEET)) {
+		styleSheetService.loadAndRegisterSheet(amoCSS, styleSheetService.USER_SHEET);
+	}
 }
 
 function shutdown(data, reason) {
@@ -209,6 +216,10 @@ function shutdown(data, reason) {
 	window = null;
 	Services.obs.removeObserver(moonttoolObserver, "moonttoolEvent");
 	AddonManager.removeInstallListener(installListener);
+
+	if (styleSheetService.sheetRegistered(amoCSS, styleSheetService.USER_SHEET)) {
+		styleSheetService.unregisterSheet(amoCSS, styleSheetService.USER_SHEET);
+	}
 }
 
 function install() {};

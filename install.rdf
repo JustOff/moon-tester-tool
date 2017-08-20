@@ -42,6 +42,9 @@ If you find the extension or theme that runs well, you have to contact author an
 		</Description>
 	</em:localized>
 
+	<em:optionsURL>chrome://moonttool/content/options.xul</em:optionsURL>
+	<em:optionsType>2</em:optionsType>
+
 	<em:targetApplication>
 	  <Description>
 		<em:id>{8de7fcbb-c55c-4fbe-bfc5-fc555c87dbc4}</em:id>

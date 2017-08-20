@@ -21,6 +21,27 @@ Installation of improper extensions or themes may break the browser and lead to 
 If you find the extension or theme that runs well, you have to contact author and ask him to provide compatibility with Pale Moon officially.</em:description>
 	<em:creator>Off JustOff &lt;Off.Just.Off@gmail.com&gt;</em:creator>
 	<em:homepageURL>https://github.com/JustOff/moon-tester-tool/</em:homepageURL>
+
+	<em:localized>
+		<Description>
+			<em:locale>ru</em:locale>
+			<em:name>Moon Tester Tool</em:name>
+			<em:description style="white-space: pre;">Позволяет установить любое расширение или тему, независимо от того какой браузер и версия указаны в его манифесте. 
+
+Дополнительные возможности: 
+- Отключает автоматическое обновление 
+- Исправляет проблему двоящегося текста в темах Firefox 
+- Обновляет правила chrome.manifest для совместимости с Pale Moon 
+- Разблокирует возможность загрузки несовместимых версий расширений с AMO.
+
+ВНИМАНИЕ! MOON TESTER TOOL ПРЕДНАЗНАЧЕН ТОЛЬКО ДЛЯ ПРОДВИНУТЫХ ПОЛЬЗОВАТЕЛЕЙ И ИСКЛЮЧИТЕЛЬНО В ЦЕЛЯХ ТЕСТИРОВАНИЯ! 
+
+Установка расширений или тем, не предназначенных для Pale Moon, может нарушить работу браузера и привести к повреждению или потере данных. Вы не можете ожидать или просить поддержки расширений и тем, установленных с помощью Moon Tester Tool, ни от их авторов, ни от разработчиков браузера. 
+
+Если вы обнаружили, что расширение или тема работает хорошо, вам следует обратиться к автору этого дополнения и попросить его об официальной поддержке Pale Moon.</em:description>
+		</Description>
+	</em:localized>
+
 	<em:targetApplication>
 	  <Description>
 		<em:id>{8de7fcbb-c55c-4fbe-bfc5-fc555c87dbc4}</em:id>

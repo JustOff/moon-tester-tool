@@ -95,16 +95,19 @@ function main(aWindow) {
 		zr.close();
 
 		instData = instData.replace(/^\xEF\xBB\xBF/, "");
-		instData = instData.replace(/<em:name>/ig, "<em:name>[TEST] ");
-		instData = instData.replace(/em:name\s*=\s*"/ig, 'em:name="[TEST] ');
-		instData = instData.replace(/<em:targetApplication>[\s\S]+?<\/em:targetApplication>/i, "%PMcompatData%");
-		instData = instData.replace(/<em:targetApplication>[\s\S]+?<\/em:targetApplication>/ig, "");
-		instData = instData.replace(/<em:updateURL>[\s\S]+?<\/em:updateURL>/i, "");
-		instData = instData.replace(/em:updateURL\s*=\s*".+?"/i, "");
-		instData = instData.replace("%PMcompatData%",
-									"<em:targetApplication><Description><em:id>{8de7fcbb-c55c-4fbe-bfc5-fc555c87dbc4}</em:id><em:minVersion>27.0.0a1</em:minVersion><em:maxVersion>*</em:maxVersion></Description></em:targetApplication><em:updateURL>https://localhost/update.xml</em:updateURL>");
+		instData = instData.replace(/<(em:)?name>/ig, "<$1name>[TEST] ");
+		instData = instData.replace(/(em:)?name\s*=\s*"/ig, '$1name="[TEST] ');
+		instData = instData.replace(/<em:targetApplication>[\s\S]+?<\/em:targetApplication>/i, "%PMcompatDataA%");
+		instData = instData.replace(/<targetApplication>[\s\S]+?<\/targetApplication>/i, "%PMcompatDataB%");
+		instData = instData.replace(/<(em:)?targetApplication>[\s\S]+?<\/(em:)?targetApplication>/ig, "");
+		instData = instData.replace(/<(em:)?updateURL>[\s\S]+?<\/(em:)?updateURL>/i, "");
+		instData = instData.replace(/(em:)?updateURL\s*=\s*".+?"/i, "");
+		var PMcompatData = "<em:targetApplication><Description><em:id>{8de7fcbb-c55c-4fbe-bfc5-fc555c87dbc4}</em:id><em:minVersion>27.0.0a1</em:minVersion><em:maxVersion>*</em:maxVersion></Description></em:targetApplication><em:updateURL>https://localhost/update.xml</em:updateURL>";
+		instData = instData.replace("%PMcompatDataA%", PMcompatData);
+		PMcompatData = PMcompatData.replace(/em:/gi, "");
+		instData = instData.replace("%PMcompatDataB%", PMcompatData);
 
-		var isTheme = /<em:type>4<\/em:type>/.test(instData);
+		var isTheme = /<(em:)?type>4<\/(em:)?type>/.test(instData);
 		if (isTheme) {
 			instData = instData.replace(/\[TEST\]/g, "[FIX]");
 			var cssFix = "chrome/browser/statusbar/overlay.css";

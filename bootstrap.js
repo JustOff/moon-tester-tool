@@ -57,7 +57,7 @@ function main(aWindow) {
 		zr.open(tmpFile);
 
 		if (!zr.hasEntry(instName)) {
-			alert("Invalid XPI file!");
+			aWindow.alert("Invalid XPI file!");
 			zr.close();
 			throw "Invalid XPI";
 		}

@@ -1,7 +1,32 @@
 @namespace url(http://www.w3.org/1999/xhtml);
 @-moz-document domain("addons.mozilla.org"){
-  .button.concealed {
+  .install-button a.concealed {
     cursor: pointer !important;
     pointer-events: auto !important;
+    background: #489615 !important;
+    color: #FFF !important;
+  }
+  .install-button a.button span {
+    display: none;
+  }
+  .install-button a.installer:before {
+    content: 'Add to Pale Moon';
+  }
+  .install-button a.concealed:before {
+    content: 'Download File';
+  }
+  .install-button a.concealed:hover:after{
+    background: #FFFFE1;
+    border: 1px solid;
+    bottom: 26px;
+    color: #000;
+    font-size: 12px;
+    font-weight: normal;
+    content: 'Use "Save Link As…" from the context menu!';
+    left: 20%;
+    padding: 5px 15px;
+    position: absolute;
+    z-index: 98;
+    width: 130px;
   }
 }

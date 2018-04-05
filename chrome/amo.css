@@ -6,7 +6,8 @@
     background: #489615 !important;
     color: #FFF !important;
   }
-  .install-button a.button span {
+  .install-button a.installer span,
+  .install-button a.concealed span {
     display: none;
   }
   .install-button a.installer:before {

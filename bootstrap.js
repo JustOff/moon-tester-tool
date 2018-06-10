@@ -217,7 +217,7 @@ function startup(data, reason) {
 		styleSheetService.loadAndRegisterSheet(amoCSS, styleSheetService.USER_SHEET);
 	}
 
-	Services.cookies.add("addons.mozilla.org", "/", "mamo", "off", false, false, false, Date.now()/1000 + 31536000);
+	Services.cookies.add("addons.mozilla.org", "/", "mamo", "off", false, false, false, Date.now()/1000 + 31536000, {});
 }
 
 function shutdown(data, reason) {

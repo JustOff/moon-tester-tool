@@ -44,7 +44,8 @@ function patchAndInstall(win, srcFile) {
     zipReader.open(tmpFile);
 
     if (!zipReader.hasEntry(instName)) {
-      win.alert("Invalid XPI file!");
+      let bundle = Services.strings.createBundle("chrome://moonttool/locale/moonttool.properties");
+      win.alert(bundle.GetStringFromName("invalid"));
       zipReader.close();
       throw "Invalid XPI";
     }
@@ -157,8 +158,9 @@ function patchAndInstall(win, srcFile) {
 }
 
 function installTestAddon(win) {
+  let bundle = Services.strings.createBundle("chrome://moonttool/locale/moonttool.properties");
   let filePicker = Cc["@mozilla.org/filepicker;1"].createInstance(Ci.nsIFilePicker);
-  filePicker.init(win, "Select add-on to install", Ci.nsIFilePicker.modeOpen); 
+  filePicker.init(win, bundle.GetStringFromName("load"), Ci.nsIFilePicker.modeOpen); 
   try {
     filePicker.appendFilter("Add-ons", "*.xpi");
     filePicker.appendFilters(Ci.nsIFilePicker.filterAll);
@@ -173,14 +175,15 @@ function showButtons(subject) {
   let doc = subject.document || this;
   if (doc.getElementById("view-port").selectedPanel.id == "list-view") {
     let button, item, controlContainer;
+    let bundle = Services.strings.createBundle("chrome://moonttool/locale/moonttool.properties");
     for (let i = 0; i < doc.getElementById("addon-list").itemCount; i++) {
       item = doc.getElementById("addon-list").getItemAtIndex(i);
       controlContainer = doc.getAnonymousElementByAttribute(item, "anonid", "control-container");
       if (controlContainer && item.getAttribute("type") == "extension" && !item.hasAttribute("mtt-test") &&
           (item.getAttribute("native") == "false" || item.mAddon.isCompatible == false)) {
         button = doc.createElementNS(XUL_NS, "button");
-        button.setAttribute("label", "TEST");
-        button.setAttribute("tooltiptext", "Re-install using Moon Tester Tool");
+        button.setAttribute("label", bundle.GetStringFromName("test.label"));
+        button.setAttribute("tooltiptext", bundle.GetStringFromName("test.tooltip"));
         button.setAttribute("class", "addon-control mtt-test");
         button.setAttribute("extid", item.value);
         button.setAttribute("oncommand", "Services.obs.notifyObservers(window, 'moonttoolEvent', 'Test::' + this.getAttribute('extid'));");
@@ -215,15 +218,15 @@ function onLoadAM() {
       }
     }
   }, false);
+  let bundle = Services.strings.createBundle("chrome://moonttool/locale/moonttool.properties");
   let separator = this.document.createElementNS(XUL_NS, "menuseparator");
   separator.setAttribute("id", "menuseparator_saveXPI");
   menu.appendChild(separator);
   let item = this.document.createElementNS(XUL_NS, "menuitem");
   item.setAttribute("id", "menuitem_saveXPI");
-  item.setAttribute("label", "Save as XPI");
+  item.setAttribute("label", bundle.GetStringFromName("save"));
   item.setAttribute("oncommand", "Services.obs.notifyObservers(window, 'moonttoolEvent', 'Save::' + this.getAttribute('extid'));");
   menu.appendChild(item);
-  let bundle = Services.strings.createBundle("chrome://moonttool/locale/moonttool.properties");
   let umenu = this.document.getElementById("utils-menu");
   let useparator = this.document.createElementNS(XUL_NS, "menuseparator");
   umenu.append(useparator);

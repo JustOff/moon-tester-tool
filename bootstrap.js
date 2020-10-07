@@ -9,6 +9,24 @@ Cu.import("resource://gre/modules/Services.jsm");
 const pr = {PR_RDONLY: 0x01, PR_WRONLY: 0x02, PR_RDWR: 0x04, PR_CREATE_FILE: 0x08, PR_APPEND: 0x10, PR_TRUNCATE: 0x20};
 var tempDir;
 
+function clearTemp() {
+  AddonManager.removeInstallListener(installListener);
+  if (tempDir && tempDir.exists()) {
+    try {
+      tempDir.remove(true);
+    } catch(e) {}
+    tempDir = null;
+  }
+}
+
+var installListener = {
+  onDownloadCancelled: () => { clearTemp(); },
+  onDownloadFailed:    () => { clearTemp(); },
+  onInstallEnded:      () => { clearTemp(); },
+  onInstallCancelled:  () => { clearTemp(); },
+  onInstallFailed:     () => { clearTemp(); }
+}
+
 function main(win) {
   let filePicker = Cc["@mozilla.org/filepicker;1"].createInstance(Ci.nsIFilePicker);
   filePicker.init(win, "Select add-on to install", Ci.nsIFilePicker.modeOpen); 
@@ -146,38 +164,6 @@ function main(win) {
     });
   } catch(e) {
     Cu.reportError(e);
-    clearTemp();
-  }
-}
-
-function clearTemp() {
-  AddonManager.removeInstallListener(installListener);
-  if (tempDir && tempDir.exists()) {
-    try {
-      tempDir.remove(true);
-    } catch(e) {}
-    tempDir = null;
-  }
-}
-
-var installListener = {
-  onDownloadCancelled: function() {
-    clearTemp();
-  },
-
-  onDownloadFailed: function() {
-    clearTemp();
-  },
-
-  onInstallEnded: function() {
-    clearTemp();
-  },
-
-  onInstallCancelled: function() {
-    clearTemp();
-  },
-
-  onInstallFailed: function() {
     clearTemp();
   }
 }

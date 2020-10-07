@@ -19,7 +19,7 @@ WARNING! MOON TESTER TOOL IS INTENDED FOR ADVANCED USERS AND FOR TEST PURPOSES O
 
 Installation of improper extensions or themes may break the browser and lead to the damage or loss of data. You can't expect or ask for any support of extensions and themes installed via Moon Tester Tool neither from their authors, nor from developers of the browser. 
 
-If you find the add-on or theme that runs well, you have to contact author and ask him to provide compatibility with Pale Moon officially.</em:description>
+If you find the add-on or theme that runs well, you have to contact the author and ask their to provide compatibility with Pale Moon officially, or fork it yourself if the license allows.</em:description>
     <em:creator>Off JustOff &lt;Off.Just.Off@gmail.com&gt;</em:creator>
     <em:homepageURL>https://github.com/JustOff/moon-tester-tool/</em:homepageURL>
 
@@ -36,11 +36,11 @@ If you find the add-on or theme that runs well, you have to contact author and a
 - Сохранение установленных дополнений из контекстного меню 
 - Переустановка дополнений в режиме совместимости 
 
-ВНИМАНИЕ! MOON TESTER TOOL ПРЕДНАЗНАЧЕН ТОЛЬКО ДЛЯ ПРОДВИНУТЫХ ПОЛЬЗОВАТЕЛЕЙ И ИСКЛЮЧИТЕЛЬНО В ЦЕЛЯХ ТЕСТИРОВАНИЯ! 
+ВНИМАНИЕ! MOON TESTER TOOL ПРЕДНАЗНАЧЕН ТОЛЬКО ДЛЯ ПРОДВИНУТЫХ ПОЛЬЗОВАТЕЛЕЙ И МОЖЕТ БЫТЬ ИСПОЛЬЗОВАН ИСКЛЮЧИТЕЛЬНО В ЦЕЛЯХ ТЕСТИРОВАНИЯ! 
 
 Установка расширений или тем, не предназначенных для Pale Moon, может нарушить работу браузера и привести к повреждению или потере данных. Вы не можете ожидать или просить поддержки расширений и тем, установленных с помощью Moon Tester Tool, ни от их авторов, ни от разработчиков браузера. 
 
-Если вы обнаружили, что расширение или тема работает хорошо, вам следует обратиться к автору этого дополнения и попросить его об официальной поддержке Pale Moon.</em:description>
+Если вы обнаружили, что расширение или тема работает хорошо, вам следует обратиться к автору этого дополнения и попросить его об официальной поддержке Pale Moon или сделать свое дополнение на основе исходного, если лицензия это позволяет.</em:description>
       </Description>
     </em:localized>
 

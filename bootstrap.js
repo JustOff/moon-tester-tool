@@ -8,7 +8,7 @@ Cu.import("resource://gre/modules/Services.jsm");
 
 const pr = {PR_RDONLY: 0x01, PR_WRONLY: 0x02, PR_RDWR: 0x04, PR_CREATE_FILE: 0x08, PR_APPEND: 0x10, PR_TRUNCATE: 0x20};
 const XUL_NS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
-var tempDir;
+var tempDir, branch = "extensions.moonttool.";
 
 function clearTemp() {
   AddonManager.removeInstallListener(installListener);
@@ -157,7 +157,23 @@ function patchAndInstall(win, srcFile) {
   }
 }
 
+function checkDiscalimer(win) {
+  if (Services.prefs.getBranch(branch).getBoolPref("disclaimer")) {
+    return true;
+  } else {
+    let bundle = Services.strings.createBundle("chrome://moonttool/locale/moonttool.properties");
+    let check = {value: false};
+    Services.prompt.alertCheck(win, bundle.GetStringFromName("disclaimer.title"), 
+      bundle.GetStringFromName("disclaimer.text"), bundle.GetStringFromName("disclaimer.message"), check);
+    if (check.value) {
+      Services.prefs.getBranch(branch).setBoolPref("disclaimer", true);
+    }
+    return check.value;
+  }
+}
+
 function installTestAddon(win) {
+  if (!checkDiscalimer(win)) { return; }
   let bundle = Services.strings.createBundle("chrome://moonttool/locale/moonttool.properties");
   let filePicker = Cc["@mozilla.org/filepicker;1"].createInstance(Ci.nsIFilePicker);
   filePicker.init(win, bundle.GetStringFromName("load"), Ci.nsIFilePicker.modeOpen); 
@@ -290,7 +306,9 @@ var moonttoolObserver = {
             srcFile.copyTo(dstFile.parent, dstFile.leafName);
           }
           if (data.substring(0, 4) == "Test") {
-            patchAndInstall(subject, dstFile);
+            if (checkDiscalimer(subject)) {
+              patchAndInstall(subject, dstFile);
+            }
           }
         }
       });
@@ -312,6 +330,7 @@ function reloadAMs() {
 }
 
 function startup(data, reason) {
+  Services.prefs.getDefaultBranch(branch).setBoolPref("disclaimer", false);
   Services.obs.addObserver(moonttoolObserver, "moonttoolEvent", false);
   Services.obs.addObserver(chromeObserver, "chrome-document-global-created", false);
   if (reason != APP_STARTUP) {

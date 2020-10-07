@@ -223,6 +223,15 @@ function onLoadAM() {
   item.setAttribute("label", "Save as XPI");
   item.setAttribute("oncommand", "Services.obs.notifyObservers(window, 'moonttoolEvent', 'Save::' + this.getAttribute('extid'));");
   menu.appendChild(item);
+  let bundle = Services.strings.createBundle("chrome://moonttool/locale/moonttool.properties");
+  let umenu = this.document.getElementById("utils-menu");
+  let useparator = this.document.createElementNS(XUL_NS, "menuseparator");
+  umenu.append(useparator);
+  let uitem = this.document.createElementNS(XUL_NS, "menuitem");
+  uitem.setAttribute("id", "utils-save-menuitem");
+  uitem.setAttribute("label", bundle.GetStringFromName("install"));
+  uitem.setAttribute("oncommand", "Services.obs.notifyObservers(window, 'moonttoolEvent', 'Run');");
+  umenu.append(uitem);
 }
 
 function onUnloadAM() {

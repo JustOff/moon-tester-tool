@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <!DOCTYPE dialog SYSTEM "chrome://moonttool/locale/moonttool.dtd">
 <vbox xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-	<setting type="control" title="&mtt.install;">
+  <setting type="control" title="&mtt.install;">
     <button label="&mtt.select;" oncommand="Services.obs.notifyObservers(window, 'moonttoolEvent', 'Run');"/>
-	</setting>
+  </setting>
 </vbox>

@@ -7,6 +7,7 @@ Cu.import("resource://gre/modules/FileUtils.jsm");
 Cu.import("resource://gre/modules/Services.jsm");
 
 const pr = {PR_RDONLY: 0x01, PR_WRONLY: 0x02, PR_RDWR: 0x04, PR_CREATE_FILE: 0x08, PR_APPEND: 0x10, PR_TRUNCATE: 0x20};
+const XUL_NS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
 var tempDir;
 
 function clearTemp() {
@@ -27,20 +28,7 @@ var installListener = {
   onInstallFailed:     () => { clearTemp(); }
 }
 
-function main(win) {
-  let filePicker = Cc["@mozilla.org/filepicker;1"].createInstance(Ci.nsIFilePicker);
-  filePicker.init(win, "Select add-on to install", Ci.nsIFilePicker.modeOpen); 
-  try {
-    filePicker.appendFilter("Add-ons", "*.xpi");
-    filePicker.appendFilters(Ci.nsIFilePicker.filterAll);
-  } catch(e) {}
-
-  if (filePicker.show() != Ci.nsIFilePicker.returnOK) {
-    return;
-  }
-
-  let srcFile = filePicker.file;
-
+function patchAndInstall(win, srcFile) {
   let tmpDir = FileUtils.getFile("TmpD", ["moonttool.tmp"]);
   tmpDir.createUnique(Ci.nsIFile.DIRECTORY_TYPE, FileUtils.PERMS_DIRECTORY);
   tempDir = tmpDir.clone();
@@ -168,22 +156,163 @@ function main(win) {
   }
 }
 
-var moonttoolObserver = {
-  observe: function(subject, topic, data) {
-    if (data == "Run") {
-      main(subject);
+function installTestAddon(win) {
+  let filePicker = Cc["@mozilla.org/filepicker;1"].createInstance(Ci.nsIFilePicker);
+  filePicker.init(win, "Select add-on to install", Ci.nsIFilePicker.modeOpen); 
+  try {
+    filePicker.appendFilter("Add-ons", "*.xpi");
+    filePicker.appendFilters(Ci.nsIFilePicker.filterAll);
+  } catch(e) {}
+
+  if (filePicker.show() == Ci.nsIFilePicker.returnOK) {
+    patchAndInstall(win, filePicker.file);
+  }
+}
+
+function showButtons(subject) {
+  let doc = subject.document || this;
+  if (doc.getElementById("view-port").selectedPanel.id == "list-view") {
+    let button, item, controlContainer;
+    for (let i = 0; i < doc.getElementById("addon-list").itemCount; i++) {
+      item = doc.getElementById("addon-list").getItemAtIndex(i);
+      controlContainer = doc.getAnonymousElementByAttribute(item, "anonid", "control-container");
+      if (controlContainer && item.getAttribute("type") == "extension" && !item.hasAttribute("mtt-test") &&
+          (item.getAttribute("native") == "false" || item.mAddon.isCompatible == false)) {
+        button = doc.createElementNS(XUL_NS, "button");
+        button.setAttribute("label", "TEST");
+        button.setAttribute("tooltiptext", "Re-install using Moon Tester Tool");
+        button.setAttribute("class", "addon-control mtt-test");
+        button.setAttribute("extid", item.value);
+        button.setAttribute("oncommand", "Services.obs.notifyObservers(window, 'moonttoolEvent', 'Test::' + this.getAttribute('extid'));");
+        controlContainer.insertBefore(button, controlContainer.firstChild);
+        item.setAttribute("mtt-test", "true");
+      }
+    }
+  }
+}
+
+function onLoadAM() {
+  this.removeEventListener("load", onLoadAM, false);
+  this.addEventListener("unload", onUnloadAM, false);
+  this.document.addEventListener("ViewChanged", showButtons, false);
+  showButtons(this);
+  let menu = this.document.getElementById("addonitem-popup");
+  menu.addEventListener("popupshowing", () => {
+    let selectedItem = this.document.getElementById("addon-list").selectedItem;
+    if (selectedItem) {
+      let addon = selectedItem.mAddon;
+      let separator = this.document.getElementById("menuseparator_saveXPI");
+      let item = this.document.getElementById("menuitem_saveXPI");
+      if (addon.type == "extension" || addon.type == "theme" ||
+          addon.type == "dictionary" || addon.type == "locale") {
+        separator.removeAttribute("style");
+        item.setAttribute("disabled", "false");
+        item.setAttribute("extid", addon.id);
+      } else {
+        separator.setAttribute("style", "display: none");
+        item.setAttribute("disabled", "true");
+        item.removeAttribute("extid");
+      }
+    }
+  }, false);
+  let separator = this.document.createElementNS(XUL_NS, "menuseparator");
+  separator.setAttribute("id", "menuseparator_saveXPI");
+  menu.appendChild(separator);
+  let item = this.document.createElementNS(XUL_NS, "menuitem");
+  item.setAttribute("id", "menuitem_saveXPI");
+  item.setAttribute("label", "Save as XPI");
+  item.setAttribute("oncommand", "Services.obs.notifyObservers(window, 'moonttoolEvent', 'Save::' + this.getAttribute('extid'));");
+  menu.appendChild(item);
+}
+
+function onUnloadAM() {
+  this.removeEventListener("unload", onUnloadAM, false);
+  this.document.removeEventListener("ViewChanged", showButtons, false);
+}
+
+var chromeObserver = {
+  observe: function chromeObserver(subject, topic, data) {
+    if (topic == "chrome-document-global-created" &&
+        subject.document && subject.document.documentURI &&
+        subject.document.documentURI == "about:addons") {
+      subject.addEventListener("load", onLoadAM, false);
     }
   }
 };
 
+function zipFolder(zipWriter, dstFilePath, dir, relPath) {
+  let entries = dir.directoryEntries;
+  while (entries.hasMoreElements()) {
+    let entry = entries.getNext().QueryInterface(Ci.nsIFile);
+    if (entry.path == dstFilePath || entry.leafName == ".git") { continue; }
+    zipWriter.addEntryFile(relPath + entry.leafName, Ci.nsIZipWriter.COMPRESSION_DEFAULT, entry, false);
+    if (entry.isDirectory()) {
+      zipFolder(zipWriter, dstFilePath, entry, relPath + entry.leafName + "/");
+    }
+  }
+}
+
+var moonttoolObserver = {
+  observe: function(subject, topic, data) {
+    if (data == "Run") {
+      installTestAddon(subject);
+    } else if (data.substring(4, 6) == "::") {
+      AddonManager.getAddonByID(data.substring(6), (addon) => {
+        if (addon == null) { return; }
+        let srcFile = addon.getResourceURI().QueryInterface(Ci.nsIFileURL).file;
+        let filePicker = Cc["@mozilla.org/filepicker;1"].createInstance(Ci.nsIFilePicker);
+        let bundle = Services.strings.createBundle("chrome://mozapps/locale/downloads/unknownContentType.properties");
+        filePicker.init(subject, bundle.GetStringFromName("saveDialogTitle"), Ci.nsIFilePicker.modeSave);
+        filePicker.appendFilter("XPInstall Install", "*.xpi");
+        filePicker.defaultString = addon.name.replace(/\s/g, "-") + "-" + addon.version + ".xpi";
+        filePicker.defaultExtension = "xpi";
+        if (filePicker.show() != Ci.nsIFilePicker.returnCancel) {
+          let dstFile = filePicker.file;
+          if (dstFile.exists()) { dstFile.remove(false); }
+          if (srcFile.isDirectory()) {
+            let zipWriter = Cc["@mozilla.org/zipwriter;1"].createInstance(Ci.nsIZipWriter);
+            zipWriter.open(dstFile, pr.PR_RDWR | pr.PR_CREATE_FILE);
+            zipFolder(zipWriter, dstFile.path, srcFile, "");
+            zipWriter.close();
+          } else {
+            srcFile.copyTo(dstFile.parent, dstFile.leafName);
+          }
+          if (data.substring(0, 4) == "Test") {
+            patchAndInstall(subject, dstFile);
+          }
+        }
+      });
+    }
+  }
+};
+
+function reloadAMs() {
+  let winenu = Services.wm.getEnumerator("navigator:browser");
+  while (winenu.hasMoreElements()) {
+    winenu.getNext().gBrowser.browsers.forEach((browser) => {
+      if (browser.currentURI.spec == "about:addons") {
+        try {
+          browser.contentWindow.location.reload();
+        } catch(e) {}
+      }
+    });
+  }
+}
+
 function startup(data, reason) {
   Services.obs.addObserver(moonttoolObserver, "moonttoolEvent", false);
+  Services.obs.addObserver(chromeObserver, "chrome-document-global-created", false);
+  if (reason != APP_STARTUP) {
+    reloadAMs();
+  }
 }
 
 function shutdown(data, reason) {
   if (reason == APP_SHUTDOWN) return;
+  Services.obs.removeObserver(chromeObserver, "chrome-document-global-created");
   Services.obs.removeObserver(moonttoolObserver, "moonttoolEvent");
   AddonManager.removeInstallListener(installListener);
+  reloadAMs();
 }
 
 function install() {};

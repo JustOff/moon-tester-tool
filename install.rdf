@@ -12,6 +12,8 @@ Extra features:
 - Disable automatic update 
 - Autocorrect doubled text in Firefox themes 
 - Update chrome.manifest rules to be compatible with Pale Moon 
+- Save installed Add-ons from context menu 
+- Re-install Add-ons in compatibility mode 
 
 WARNING! MOON TESTER TOOL IS INTENDED FOR ADVANCED USERS AND FOR TEST PURPOSES ONLY! 
 
@@ -28,9 +30,11 @@ If you find the add-on or theme that runs well, you have to contact author and a
         <em:description style="white-space: pre;">Позволяет установить любое расширение или тему, независимо от того какой браузер и версия указаны в его манифесте. 
 
 Дополнительные возможности: 
-- Отключает автоматическое обновление 
-- Исправляет проблему двоящегося текста в темах Firefox 
-- Обновляет правила chrome.manifest для совместимости с Pale Moon 
+- Отключение автоматического обновления 
+- Исправление проблемы двоящегося текста в темах Firefox 
+- Обновление правил chrome.manifest для совместимости с Pale Moon 
+- Сохранение установленных дополнений из контекстного меню 
+- Переустановка дополнений в режиме совместимости 
 
 ВНИМАНИЕ! MOON TESTER TOOL ПРЕДНАЗНАЧЕН ТОЛЬКО ДЛЯ ПРОДВИНУТЫХ ПОЛЬЗОВАТЕЛЕЙ И ИСКЛЮЧИТЕЛЬНО В ЦЕЛЯХ ТЕСТИРОВАНИЯ! 
 

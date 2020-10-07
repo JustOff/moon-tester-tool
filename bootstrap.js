@@ -138,6 +138,7 @@ function main(win) {
     }
     zipWriter.close();
 
+    AddonManager.addInstallListener(installListener);
     AddonManager.getInstallForFile(tmpFile, (install) => {
       let webInstaller = Cc["@mozilla.org/addons/web-install-listener;1"].getService(Ci.amIWebInstallListener);
       let browser = win.QueryInterface(Ci.nsIInterfaceRequestor).getInterface(Ci.nsIDocShell).chromeEventHandler;
@@ -150,6 +151,7 @@ function main(win) {
 }
 
 function clearTemp() {
+  AddonManager.removeInstallListener(installListener);
   if (tempDir && tempDir.exists()) {
     try {
       tempDir.remove(true);
@@ -189,13 +191,11 @@ var moonttoolObserver = {
 };
 
 function startup(data, reason) {
-  AddonManager.addInstallListener(installListener);
   Services.obs.addObserver(moonttoolObserver, "moonttoolEvent", false);
 }
 
 function shutdown(data, reason) {
   if (reason == APP_SHUTDOWN) return;
-
   Services.obs.removeObserver(moonttoolObserver, "moonttoolEvent");
   AddonManager.removeInstallListener(installListener);
 }

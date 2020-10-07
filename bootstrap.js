@@ -7,19 +7,7 @@ Cu.import("resource://gre/modules/FileUtils.jsm");
 Cu.import("resource://gre/modules/Services.jsm");
 
 const pr = {PR_RDONLY: 0x01, PR_WRONLY: 0x02, PR_RDWR: 0x04, PR_CREATE_FILE: 0x08, PR_APPEND: 0x10, PR_TRUNCATE: 0x20};
-var window, tempDir;
-
-function installFromFile(file) {
-  function doInstall(install) {
-    let webInstaller = Cc["@mozilla.org/addons/web-install-listener;1"].getService(Ci.amIWebInstallListener);
-    let browser = window.QueryInterface(Ci.nsIInterfaceRequestor).getInterface(Ci.nsIDocShell).chromeEventHandler;
-    webInstaller.onWebInstallRequested(browser, window.document.documentURIObject, [install], 1);
-  }
-
-  AddonManager.getInstallForFile(file, function(install) {
-    doInstall(install);
-  });
-}
+var tempDir;
 
 function main(win) {
   let filePicker = Cc["@mozilla.org/filepicker;1"].createInstance(Ci.nsIFilePicker);
@@ -150,8 +138,11 @@ function main(win) {
     }
     zipWriter.close();
 
-    window = win;
-    installFromFile(tmpFile);
+    AddonManager.getInstallForFile(tmpFile, (install) => {
+      let webInstaller = Cc["@mozilla.org/addons/web-install-listener;1"].getService(Ci.amIWebInstallListener);
+      let browser = win.QueryInterface(Ci.nsIInterfaceRequestor).getInterface(Ci.nsIDocShell).chromeEventHandler;
+      webInstaller.onWebInstallRequested(browser, win.document.documentURIObject, [install], 1);
+    });
   } catch(e) {
     Cu.reportError(e);
     clearTemp();
@@ -164,9 +155,6 @@ function clearTemp() {
       tempDir.remove(true);
     } catch(e) {}
     tempDir = null;
-  }
-  if (window) {
-    window = null;
   }
 }
 
@@ -208,7 +196,6 @@ function startup(data, reason) {
 function shutdown(data, reason) {
   if (reason == APP_SHUTDOWN) return;
 
-  window = null;
   Services.obs.removeObserver(moonttoolObserver, "moonttoolEvent");
   AddonManager.removeInstallListener(installListener);
 }

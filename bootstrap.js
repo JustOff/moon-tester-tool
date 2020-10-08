@@ -10,6 +10,15 @@ const pr = {PR_RDONLY: 0x01, PR_WRONLY: 0x02, PR_RDWR: 0x04, PR_CREATE_FILE: 0x0
 const XUL_NS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
 var tempDir, branch = "extensions.moonttool.";
 
+var locale = {
+  get: function(key) {
+    if (!this.bundle) {
+      this.bundle = Services.strings.createBundle("chrome://moonttool/locale/moonttool.properties");
+    }
+    return this.bundle.GetStringFromName(key);
+  }
+};
+
 function clearTemp() {
   AddonManager.removeInstallListener(installListener);
   if (tempDir && tempDir.exists()) {
@@ -26,7 +35,7 @@ var installListener = {
   onInstallEnded:      () => { clearTemp(); },
   onInstallCancelled:  () => { clearTemp(); },
   onInstallFailed:     () => { clearTemp(); }
-}
+};
 
 function patchAndInstall(win, srcFile) {
   let tmpDir = FileUtils.getFile("TmpD", ["moonttool.tmp"]);
@@ -44,8 +53,7 @@ function patchAndInstall(win, srcFile) {
     zipReader.open(tmpFile);
 
     if (!zipReader.hasEntry(instName)) {
-      let bundle = Services.strings.createBundle("chrome://moonttool/locale/moonttool.properties");
-      win.alert(bundle.GetStringFromName("invalid"));
+      win.alert(locale.get("invalid"));
       zipReader.close();
       throw "Invalid XPI";
     }
@@ -161,10 +169,9 @@ function checkDiscalimer(win) {
   if (Services.prefs.getBranch(branch).getBoolPref("disclaimer")) {
     return true;
   } else {
-    let bundle = Services.strings.createBundle("chrome://moonttool/locale/moonttool.properties");
     let check = {value: false};
-    Services.prompt.alertCheck(win, bundle.GetStringFromName("disclaimer.title"), 
-      bundle.GetStringFromName("disclaimer.text"), bundle.GetStringFromName("disclaimer.message"), check);
+    Services.prompt.alertCheck(win, locale.get("disclaimer.title"), 
+      locale.get("disclaimer.text"), locale.get("disclaimer.message"), check);
     if (check.value) {
       Services.prefs.getBranch(branch).setBoolPref("disclaimer", true);
     }
@@ -174,9 +181,8 @@ function checkDiscalimer(win) {
 
 function installTestAddon(win) {
   if (!checkDiscalimer(win)) { return; }
-  let bundle = Services.strings.createBundle("chrome://moonttool/locale/moonttool.properties");
   let filePicker = Cc["@mozilla.org/filepicker;1"].createInstance(Ci.nsIFilePicker);
-  filePicker.init(win, bundle.GetStringFromName("load"), Ci.nsIFilePicker.modeOpen); 
+  filePicker.init(win, locale.get("load"), Ci.nsIFilePicker.modeOpen); 
   try {
     filePicker.appendFilter("Add-ons", "*.xpi");
     filePicker.appendFilters(Ci.nsIFilePicker.filterAll);
@@ -191,15 +197,14 @@ function showButtons(subject) {
   let doc = subject.document || this;
   if (doc.getElementById("view-port").selectedPanel.id == "list-view") {
     let button, item, controlContainer;
-    let bundle = Services.strings.createBundle("chrome://moonttool/locale/moonttool.properties");
     for (let i = 0; i < doc.getElementById("addon-list").itemCount; i++) {
       item = doc.getElementById("addon-list").getItemAtIndex(i);
       controlContainer = doc.getAnonymousElementByAttribute(item, "anonid", "control-container");
       if (controlContainer && item.getAttribute("type") == "extension" && !item.hasAttribute("mtt-test") &&
           (item.getAttribute("native") == "false" || item.mAddon.isCompatible == false)) {
         button = doc.createElementNS(XUL_NS, "button");
-        button.setAttribute("label", bundle.GetStringFromName("test.label"));
-        button.setAttribute("tooltiptext", bundle.GetStringFromName("test.tooltip"));
+        button.setAttribute("label", locale.get("test.label"));
+        button.setAttribute("tooltiptext", locale.get("test.tooltip"));
         button.setAttribute("class", "addon-control mtt-test");
         button.setAttribute("extid", item.value);
         button.setAttribute("oncommand", "Services.obs.notifyObservers(window, 'moonttoolEvent', 'Test::' + this.getAttribute('extid'));");
@@ -234,13 +239,12 @@ function onLoadAM() {
       }
     }
   }, false);
-  let bundle = Services.strings.createBundle("chrome://moonttool/locale/moonttool.properties");
   let separator = this.document.createElementNS(XUL_NS, "menuseparator");
   separator.setAttribute("id", "menuseparator_saveXPI");
   menu.appendChild(separator);
   let item = this.document.createElementNS(XUL_NS, "menuitem");
   item.setAttribute("id", "menuitem_saveXPI");
-  item.setAttribute("label", bundle.GetStringFromName("save"));
+  item.setAttribute("label", locale.get("save"));
   item.setAttribute("oncommand", "Services.obs.notifyObservers(window, 'moonttoolEvent', 'Save::' + this.getAttribute('extid'));");
   menu.appendChild(item);
   let umenu = this.document.getElementById("utils-menu");
@@ -248,7 +252,7 @@ function onLoadAM() {
   umenu.append(useparator);
   let uitem = this.document.createElementNS(XUL_NS, "menuitem");
   uitem.setAttribute("id", "utils-save-menuitem");
-  uitem.setAttribute("label", bundle.GetStringFromName("install"));
+  uitem.setAttribute("label", locale.get("install"));
   uitem.setAttribute("oncommand", "Services.obs.notifyObservers(window, 'moonttoolEvent', 'Run');");
   umenu.append(uitem);
 }
@@ -288,10 +292,9 @@ var moonttoolObserver = {
       AddonManager.getAddonByID(data.substring(6), (addon) => {
         if (addon == null) { return; }
         if (addon.name.startsWith("[TEST]") || addon.name.startsWith("[FIX]")) {
-          let bundle = Services.strings.createBundle("chrome://moonttool/locale/moonttool.properties");
           let check = {value: false};
-          Services.prompt.alertCheck(subject, bundle.GetStringFromName("warning.title"), 
-            bundle.GetStringFromName("warning.text"), bundle.GetStringFromName("warning.message"), check);
+          Services.prompt.alertCheck(subject, locale.get("warning.title"), 
+            locale.get("warning.text"), locale.get("warning.message"), check);
           if (!check.value) { return; }
         }
         let srcFile = addon.getResourceURI().QueryInterface(Ci.nsIFileURL).file;

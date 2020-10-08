@@ -72,7 +72,7 @@ function patchAndInstall(win, srcFile) {
     let inputStream = zipReader.getInputStream(instName);
     let sInputStream = Cc['@mozilla.org/scriptableinputstream;1'].createInstance(Ci.nsIScriptableInputStream);
     sInputStream.init(inputStream);
-    let instData = sInputStream.read(instFile.realSize);
+    let instData = converter.ConvertToUnicode(sInputStream.read(instFile.realSize));
     sInputStream.close();
 
     let manifestStream, hasManifest = zipReader.hasEntry(manifestName);
@@ -80,7 +80,7 @@ function patchAndInstall(win, srcFile) {
       let manifestFile = zipReader.getEntry(manifestName);
       inputStream = zipReader.getInputStream(manifestName);
       sInputStream.init(inputStream);
-      let manifestData = sInputStream.read(manifestFile.realSize);
+      let manifestData = converter.ConvertToUnicode(sInputStream.read(manifestFile.realSize));
       sInputStream.close();
 
       manifestData = manifestData.replace(/^\xEF\xBB\xBF/, "");

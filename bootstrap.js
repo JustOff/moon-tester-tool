@@ -287,6 +287,13 @@ var moonttoolObserver = {
     } else if (data.substring(4, 6) == "::") {
       AddonManager.getAddonByID(data.substring(6), (addon) => {
         if (addon == null) { return; }
+        if (addon.name.startsWith("[TEST]") || addon.name.startsWith("[FIX]")) {
+          let bundle = Services.strings.createBundle("chrome://moonttool/locale/moonttool.properties");
+          let check = {value: false};
+          Services.prompt.alertCheck(subject, bundle.GetStringFromName("warning.title"), 
+            bundle.GetStringFromName("warning.text"), bundle.GetStringFromName("warning.message"), check);
+          if (!check.value) { return; }
+        }
         let srcFile = addon.getResourceURI().QueryInterface(Ci.nsIFileURL).file;
         let filePicker = Cc["@mozilla.org/filepicker;1"].createInstance(Ci.nsIFilePicker);
         let bundle = Services.strings.createBundle("chrome://mozapps/locale/downloads/unknownContentType.properties");

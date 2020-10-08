@@ -6,20 +6,19 @@
     <em:type>2</em:type>
     <em:bootstrap>true</em:bootstrap>
     <em:name>Moon Tester Tool</em:name>
-    <em:description style="white-space: pre;">Allows to install any extension or theme, regardless of target application and versions specified in its manifest. 
+    <em:description>Allows to install any add-on, regardless of target application and versions specified in its manifest. 
 
 Extra features: 
 - Disable automatic update 
-- Autocorrect doubled text in Firefox themes 
 - Update chrome.manifest rules to be compatible with Pale Moon 
-- Save installed Add-ons from context menu 
-- Re-install Add-ons in compatibility mode 
+- Save installed add-ons from context menu 
+- Re-install add-ons in compatibility mode 
 
 WARNING! MOON TESTER TOOL IS INTENDED FOR ADVANCED USERS AND FOR TEST PURPOSES ONLY! 
 
-Installation of improper extensions or themes may break the browser and lead to the damage or loss of data. You can't expect or ask for any support of extensions and themes installed via Moon Tester Tool neither from their authors, nor from developers of the browser. 
+Installation of improper add-ons may break the browser and lead to the damage or loss of data. You cannot expect or ask for any support for add-ons installed using Moon Tester Tool neither from their authors, nor from developers of the browser. 
 
-If you find the add-on or theme that runs well, you have to contact the author and ask their to provide compatibility with Pale Moon officially, or fork it yourself if the license allows.</em:description>
+If you find the add-on that runs well, you have to contact the author and ask their to provide compatibility with Pale Moon officially, or fork it yourself if the license allows.</em:description>
     <em:creator>Off JustOff &lt;Off.Just.Off@gmail.com&gt;</em:creator>
     <em:homepageURL>https://github.com/JustOff/moon-tester-tool/</em:homepageURL>
 
@@ -27,20 +26,19 @@ If you find the add-on or theme that runs well, you have to contact the author a
       <Description>
         <em:locale>ru</em:locale>
         <em:name>Moon Tester Tool</em:name>
-        <em:description style="white-space: pre;">Позволяет установить любое расширение или тему, независимо от того какой браузер и версия указаны в его манифесте. 
+        <em:description>Позволяет установить любое дополнение, независимо от того какой браузер и версия указаны в его манифесте. 
 
 Дополнительные возможности: 
 - Отключение автоматического обновления 
-- Исправление проблемы двоящегося текста в темах Firefox 
 - Обновление правил chrome.manifest для совместимости с Pale Moon 
 - Сохранение установленных дополнений из контекстного меню 
 - Переустановка дополнений в режиме совместимости 
 
 ВНИМАНИЕ! MOON TESTER TOOL ПРЕДНАЗНАЧЕН ТОЛЬКО ДЛЯ ПРОДВИНУТЫХ ПОЛЬЗОВАТЕЛЕЙ И МОЖЕТ БЫТЬ ИСПОЛЬЗОВАН ИСКЛЮЧИТЕЛЬНО В ЦЕЛЯХ ТЕСТИРОВАНИЯ! 
 
-Установка расширений или тем, не предназначенных для Pale Moon, может нарушить работу браузера и привести к повреждению или потере данных. Вы не можете ожидать или просить поддержки расширений и тем, установленных с помощью Moon Tester Tool, ни от их авторов, ни от разработчиков браузера. 
+Установка дополнений, не предназначенных для Pale Moon, может нарушить работу браузера и привести к повреждению или потере данных. Вы не можете ожидать или просить поддержки дополнений, установленных с помощью Moon Tester Tool, ни от их авторов, ни от разработчиков браузера. 
 
-Если вы обнаружили, что расширение или тема работает хорошо, вам следует обратиться к автору этого дополнения и попросить его об официальной поддержке Pale Moon или сделать свое дополнение на основе исходного, если лицензия это позволяет.</em:description>
+Если вы обнаружили, что дополнение работает хорошо, вам следует обратиться к его автору и попросить об официальной поддержке Pale Moon или сделать свое дополнение на основе исходного, если лицензия это позволяет.</em:description>
       </Description>
     </em:localized>
 

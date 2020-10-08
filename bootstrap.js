@@ -107,41 +107,9 @@ function patchAndInstall(win, srcFile) {
     instData = instData.replace("%compatDataA%", compatData);
     compatData = compatData.replace(/em:/gi, "");
     instData = instData.replace("%compatDataB%", compatData);
-
-    let isTheme = /<(em:)?type>4<\/(em:)?type>/.test(instData);
-    if (isTheme) {
-      instData = instData.replace(/\[TEST\]/g, "[FIX]");
-      let cssFix = "chrome/browser/statusbar/overlay.css";
-      let cssData = `@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
-
-#urlbar .urlbar-over-link-layer
-{
-  opacity: 0;
-}
-
-#urlbar .urlbar-over-link-layer[overlinkstate="fade-in"]
-{
-  -moz-transition-property: opacity;
-  -moz-transition-duration: 150ms;
-  opacity: 1;
-}
-
-#urlbar .urlbar-over-link-layer[overlinkstate="fade-out"]
-{
-  -moz-transition-property: opacity;
-  -moz-transition-duration: 150ms;
-  -moz-transition-timing-function: cubic-bezier(0.0, 1.0, 1.0, 1.0);
-}
-
-#urlbar .urlbar-over-link-layer[overlinkstate="showing"]
-{
-  opacity: 1;
-}`;
-      let cssStream = converter.convertToInputStream(cssData);
-    }
-
     instData += "\n\n<?original data:\n" + origInst.replace(/<\?.+?\?>/g,"") +
       "\nThis Add-on has been modified by Moon Tester Tool - https://github.com/JustOff/moon-tester-tool\n\n?>";
+
     inputStream = converter.convertToInputStream(instData);
 
     let zipWriter = Cc['@mozilla.org/zipwriter;1'].createInstance(Ci.nsIZipWriter);
@@ -153,9 +121,6 @@ function patchAndInstall(win, srcFile) {
     }
     zipWriter.removeEntry(instName, false);
     zipWriter.addEntryStream(instName, Date.now(), Ci.nsIZipWriter.COMPRESSION_DEFAULT, inputStream, false);
-    if (isTheme) {
-      zipWriter.addEntryStream(cssFix, Date.now(), Ci.nsIZipWriter.COMPRESSION_DEFAULT, cssStream, false);
-    }
     if (hasManifest) {
       zipWriter.removeEntry(manifestName, false);
       zipWriter.addEntryStream(manifestName, Date.now(), Ci.nsIZipWriter.COMPRESSION_DEFAULT, manifestStream, false);
@@ -300,7 +265,7 @@ var moonttoolObserver = {
     } else if (data.substring(4, 6) == "::") {
       AddonManager.getAddonByID(data.substring(6), (addon) => {
         if (addon == null) { return; }
-        if (addon.name.startsWith("[TEST]") || addon.name.startsWith("[FIX]")) {
+        if (addon.name.startsWith("[TEST]")) {
           let check = {value: false};
           Services.prompt.alertCheck(subject, locale.get("warning.title"), 
             locale.get("warning.text"), locale.get("warning.message"), check);

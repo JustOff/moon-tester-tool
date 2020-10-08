@@ -84,13 +84,18 @@ function patchAndInstall(win, srcFile) {
       sInputStream.close();
 
       manifestData = manifestData.replace(/^\xEF\xBB\xBF/, "");
+      let origManifest = manifestData;
       manifestData = manifestData.replace(/\{ec8030f7\-c20a\-464f\-9b0e\-13a3a9e97384\}/gi, "{8de7fcbb-c55c-4fbe-bfc5-fc555c87dbc4}");
+      if (manifestData != origManifest) {
+        manifestData += "\n\n# Original data:\n#\n# " + origManifest.split(/\r?\n/).join("\n# ");
+      }
 
       manifestStream = converter.convertToInputStream(manifestData);
     }
     zipReader.close();
 
     instData = instData.replace(/^\xEF\xBB\xBF/, "");
+    let origInst = instData;
     instData = instData.replace(/<(em:)?name>/ig, "<$1name>[TEST] ");
     instData = instData.replace(/(em:)?name\s*=\s*"/ig, '$1name="[TEST] ');
     instData = instData.replace(/<em:targetApplication>[\s\S]+?<\/em:targetApplication>/i, "%compatDataA%");
@@ -135,6 +140,8 @@ function patchAndInstall(win, srcFile) {
       let cssStream = converter.convertToInputStream(cssData);
     }
 
+    instData += "\n\n<?original data:\n" + origInst.replace(/<\?.+?\?>/g,"") +
+      "\nThis Add-on has been modified by Moon Tester Tool - https://github.com/JustOff/moon-tester-tool\n\n?>";
     inputStream = converter.convertToInputStream(instData);
 
     let zipWriter = Cc['@mozilla.org/zipwriter;1'].createInstance(Ci.nsIZipWriter);

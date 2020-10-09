@@ -99,6 +99,8 @@ function patchAndInstall(win, srcFile) {
     instData = instData.replace(/<(em:)?name>/ig, "<$1name>[TEST] ");
     instData = instData.replace(/(em:)?name\s*=\s*"/ig, '$1name="[TEST] ');
     instData = instData.replace(/<em:targetApplication>[\s\S]+?<\/em:targetApplication>/i, "%compatDataA%");
+    instData = instData.replace(/<em:targetApplication\s+RDF:resource[\s\S]+?\/>/i, "%compatDataA%");
+    instData = instData.replace(/<em:targetApplication\s+RDF:resource[\s\S]+?\/>/ig, "");
     instData = instData.replace(/<targetApplication>[\s\S]+?<\/targetApplication>/i, "%compatDataB%");
     instData = instData.replace(/<(em:)?targetApplication>[\s\S]+?<\/(em:)?targetApplication>/ig, "");
     instData = instData.replace(/<(em:)?updateURL>[\s\S]+?<\/(em:)?updateURL>/i, "");

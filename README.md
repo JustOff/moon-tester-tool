@@ -1,7 +1,14 @@
-**Moon Tester Tool** is designed for testing compatibility of add-ons with **Pale Moon** and autocorrect [doubled text in Firefox themes](https://forum.palemoon.org/viewtopic.php?f=45&t=14082). It allows to install any extension or theme, regardless of target application and versions specified in its manifest. The extensions installed via **Moon Tester Tool** are marked with **[TEST]** (or **[FIX]** for themes) at the beginning of the name and can't be updated automatically.
+**Moon Tester Tool** is designed for testing compatibility of add-ons with Pale Moon. It allows to install any add-on, regardless of the application and version it was designed for. The add-ons installed using **Moon Tester Tool** are marked with `[TEST]` at the beginning of the name.
 
-##### Warning! Moon Tester Tool is intended for advanced users and for test purposes only!
+Extra features:
 
-Installation of improper extensions or themes may break the browser and lead to the damage or loss of data. You can't expect or ask for any support of extensions and themes installed via **Moon Tester Tool** neither from its authors, nor from developers of the browser. 
+- Update `chrome.manifest` rules to be compatible with Pale Moon
+- Disable automatic update for add-ons with forced compatibility
+- Allow to save installed add-ons from context menu
+- Help to re-install add-ons in compatibility mode
 
-If you find the extension or theme that runs well, you have to contact author and ask him provide compatibility with **Pale Moon** officially.
+##### WARNING! MOON TESTER TOOL IS INTENDED FOR ADVANCED USERS AND FOR TEST PURPOSES ONLY!
+
+Installation of improper add-ons may break the browser and lead to the damage or loss of data. You cannot expect or ask for any support for add-ons installed using **Moon Tester Tool** neither from their authors, nor from developers of the browser.
+
+If you find the add-on that runs well, you have to contact its author and ask their to provide compatibility with Pale Moon officially, or fork it yourself if the license allows.

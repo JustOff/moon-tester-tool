@@ -6,19 +6,19 @@
     <em:type>2</em:type>
     <em:bootstrap>true</em:bootstrap>
     <em:name>Moon Tester Tool</em:name>
-    <em:description>Allows to install any add-on, regardless of target application and versions specified in its manifest. 
+    <em:description>Allows to install and test any add-on, regardless of the application and version it was designed for. 
 
 Extra features: 
-- Disable automatic update 
 - Update chrome.manifest rules to be compatible with Pale Moon 
-- Save installed add-ons from context menu 
-- Re-install add-ons in compatibility mode 
+- Disable automatic update for add-ons with forced compatibility 
+- Allow to save installed add-ons from context menu 
+- Help to re-install add-ons in compatibility mode 
 
 WARNING! MOON TESTER TOOL IS INTENDED FOR ADVANCED USERS AND FOR TEST PURPOSES ONLY! 
 
 Installation of improper add-ons may break the browser and lead to the damage or loss of data. You cannot expect or ask for any support for add-ons installed using Moon Tester Tool neither from their authors, nor from developers of the browser. 
 
-If you find the add-on that runs well, you have to contact the author and ask their to provide compatibility with Pale Moon officially, or fork it yourself if the license allows.</em:description>
+If you find the add-on that runs well, you have to contact its author and ask their to provide compatibility with Pale Moon officially, or fork it yourself if the license allows.</em:description>
     <em:creator>Off JustOff &lt;Off.Just.Off@gmail.com&gt;</em:creator>
     <em:homepageURL>https://github.com/JustOff/moon-tester-tool/</em:homepageURL>
 
@@ -26,13 +26,13 @@ If you find the add-on that runs well, you have to contact the author and ask th
       <Description>
         <em:locale>ru</em:locale>
         <em:name>Moon Tester Tool</em:name>
-        <em:description>Позволяет установить любое дополнение, независимо от того какой браузер и версия указаны в его манифесте. 
+        <em:description>Позволяет установить и протестировать любое дополнение, независимо от браузера и версии, для которых оно предназначено. 
 
 Дополнительные возможности: 
-- Отключение автоматического обновления 
 - Обновление правил chrome.manifest для совместимости с Pale Moon 
-- Сохранение установленных дополнений из контекстного меню 
-- Переустановка дополнений в режиме совместимости 
+- Отключение автоматического обновления дополнений с форсированной совместимостью 
+- Возможность сохранения установленных дополнений из контекстного меню 
+- Помощь в переустановке дополнений в режиме совместимости 
 
 ВНИМАНИЕ! MOON TESTER TOOL ПРЕДНАЗНАЧЕН ТОЛЬКО ДЛЯ ПРОДВИНУТЫХ ПОЛЬЗОВАТЕЛЕЙ И МОЖЕТ БЫТЬ ИСПОЛЬЗОВАН ИСКЛЮЧИТЕЛЬНО В ЦЕЛЯХ ТЕСТИРОВАНИЯ! 
 

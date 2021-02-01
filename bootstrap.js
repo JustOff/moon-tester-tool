@@ -86,11 +86,36 @@ function patchAndInstall(win, srcFile) {
       manifestData = manifestData.replace(/^\xEF\xBB\xBF/, "");
       let origManifest = manifestData;
       manifestData = manifestData.replace(/\{ec8030f7\-c20a\-464f\-9b0e\-13a3a9e97384\}/gi, "{8de7fcbb-c55c-4fbe-bfc5-fc555c87dbc4}");
+      manifestData = manifestData.replace(/appversion<(=28|29)/gi, "appversion<99");
+      manifestData = manifestData.replace(/appversion>(28|=29)/gi, "appversion>99");
       if (manifestData != origManifest) {
         manifestData += "\n\n# Original data:\n#\n# " + origManifest.split(/\r?\n/).join("\n# ");
       }
 
       manifestStream = converter.convertToInputStream(manifestData);
+    }
+
+    let jsFixArray = [];
+    let entries = zipReader.findEntries('*.(js|JS|jsm|JSM)$');
+    while (entries.hasMore()) {
+      let entryPointer = entries.getNext();
+      let entry = zipReader.getEntry(entryPointer);
+      if (!entry.isDirectory) {
+        inputStream = zipReader.getInputStream(entryPointer);
+        sInputStream.init(inputStream);
+        let entryData = converter.ConvertToUnicode(sInputStream.read(entry.realSize));
+        sInputStream.close();
+
+        entryData = entryData.replace(/^\xEF\xBB\xBF/, "");
+        let origData = entryData;
+        entryData = entryData.replace(/nsIXULAppInfo\)\.version/g, "nsIXULAppInfo).version.slice(0,0) + \"28.99\"");
+        entryData = entryData.replace(/(Services\.appinfo\.version|xulAppInfo\.version|AppInfo\.version)/gi, "\"28.99\"");
+        if (entryData != origData) {
+          jsFixArray.push({name: entryPointer,
+                           stream: converter.convertToInputStream(entryData),
+                           origStream: converter.convertToInputStream(origData)});
+        }
+      }
     }
     zipReader.close();
 
@@ -126,6 +151,17 @@ function patchAndInstall(win, srcFile) {
     if (hasManifest) {
       zipWriter.removeEntry(manifestName, false);
       zipWriter.addEntryStream(manifestName, Date.now(), Ci.nsIZipWriter.COMPRESSION_DEFAULT, manifestStream, false);
+    }
+    if (jsFixArray.length && Services.prompt.confirm(win, locale.get("jsfix.title"), locale.get("jsfix.text"))) {
+      for (let jsFix of jsFixArray) {
+        zipWriter.removeEntry(jsFix.name, false);
+        zipWriter.addEntryStream(jsFix.name, Date.now(), Ci.nsIZipWriter.COMPRESSION_DEFAULT, jsFix.stream, false);
+        let saveName = jsFix.name + ".mtt";
+        if (zipWriter.hasEntry(saveName)) {
+          zipWriter.removeEntry(saveName, false);
+        }
+        zipWriter.addEntryStream(saveName, Date.now(), Ci.nsIZipWriter.COMPRESSION_DEFAULT, jsFix.origStream, false);
+      }
     }
     zipWriter.close();
 

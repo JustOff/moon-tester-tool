@@ -10,6 +10,7 @@
 
 Extra features: 
 - Update chrome.manifest rules to be compatible with Pale Moon 
+- Workaround false Australis detection in Pale Moon 29.0 and later 
 - Disable automatic update for add-ons with forced compatibility 
 - Allow to save installed add-ons from context menu 
 - Help to re-install add-ons in compatibility mode 
@@ -30,6 +31,7 @@ If you find the add-on that runs well, you have to contact its author and ask th
 
 Дополнительные возможности: 
 - Обновление правил chrome.manifest для совместимости с Pale Moon 
+- Предотвращение ложного обнаружения Australis в Pale Moon 29.0 и старше 
 - Отключение автоматического обновления дополнений с форсированной совместимостью 
 - Возможность сохранения установленных дополнений из контекстного меню 
 - Помощь в переустановке дополнений в режиме совместимости 

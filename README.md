@@ -3,6 +3,7 @@
 Extra features:
 
 - Update `chrome.manifest` rules to be compatible with Pale Moon
+- Workaround false Australis detection in Pale Moon 29.0 and later
 - Disable automatic update for add-ons with forced compatibility
 - Allow to save installed add-ons from context menu
 - Help to re-install add-ons in compatibility mode

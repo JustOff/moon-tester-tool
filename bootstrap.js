@@ -72,7 +72,13 @@ function patchAndInstall(win, srcFile) {
     let inputStream = zipReader.getInputStream(instName);
     let sInputStream = Cc['@mozilla.org/scriptableinputstream;1'].createInstance(Ci.nsIScriptableInputStream);
     sInputStream.init(inputStream);
-    let instData = converter.ConvertToUnicode(sInputStream.read(instFile.realSize));
+    let instData = sInputStream.read(instFile.realSize);
+    try {
+      instData = converter.ConvertToUnicode(instData);
+    } catch (e) {
+      Cu.reportError(instName);
+      Cu.reportError(e);
+    }
     sInputStream.close();
 
     let manifestStream, hasManifest = zipReader.hasEntry(manifestName);
@@ -80,7 +86,13 @@ function patchAndInstall(win, srcFile) {
       let manifestFile = zipReader.getEntry(manifestName);
       inputStream = zipReader.getInputStream(manifestName);
       sInputStream.init(inputStream);
-      let manifestData = converter.ConvertToUnicode(sInputStream.read(manifestFile.realSize));
+      let manifestData = sInputStream.read(manifestFile.realSize);
+      try {
+        manifestData = converter.ConvertToUnicode(manifestData);
+      } catch (e) {
+        Cu.reportError(manifestName);
+        Cu.reportError(e);
+      }
       sInputStream.close();
 
       manifestData = manifestData.replace(/^\xEF\xBB\xBF/, "");
@@ -103,7 +115,13 @@ function patchAndInstall(win, srcFile) {
       if (!entry.isDirectory) {
         inputStream = zipReader.getInputStream(entryPointer);
         sInputStream.init(inputStream);
-        let entryData = converter.ConvertToUnicode(sInputStream.read(entry.realSize));
+        let entryData = sInputStream.read(entry.realSize);
+        try {
+          entryData = converter.ConvertToUnicode(entryData);
+        } catch (e) {
+          Cu.reportError(entryPointer);
+          Cu.reportError(e);
+        }
         sInputStream.close();
 
         entryData = entryData.replace(/^\xEF\xBB\xBF/, "");

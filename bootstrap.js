@@ -157,10 +157,9 @@ function patchAndInstall(win, srcFile) {
         zipWriter.removeEntry(jsFix.name, false);
         zipWriter.addEntryStream(jsFix.name, Date.now(), Ci.nsIZipWriter.COMPRESSION_DEFAULT, jsFix.stream, false);
         let saveName = jsFix.name + ".mtt";
-        if (zipWriter.hasEntry(saveName)) {
-          zipWriter.removeEntry(saveName, false);
+        if (!zipWriter.hasEntry(saveName)) {
+          zipWriter.addEntryStream(saveName, Date.now(), Ci.nsIZipWriter.COMPRESSION_DEFAULT, jsFix.origStream, false);
         }
-        zipWriter.addEntryStream(saveName, Date.now(), Ci.nsIZipWriter.COMPRESSION_DEFAULT, jsFix.origStream, false);
       }
     }
     zipWriter.close();

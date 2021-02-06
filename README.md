@@ -13,3 +13,8 @@ Extra features:
 Installation of improper add-ons may break the browser and lead to the damage or loss of data. You cannot expect or ask for any support for add-ons installed using **Moon Tester Tool** neither from their authors, nor from developers of the browser.
 
 If you find the add-on that runs well, you have to contact its author and ask their to provide compatibility with Pale Moon officially, or fork it yourself if the license allows.
+
+Additional note:
+
+- Since the Pale Moon developers decided that the warnings and disclaimers provided in the description and during the operation of this add-on were not sufficient, they added it to the blocklist.
+- You can still allow it to be installed and used by changing the Add-on security level in your browser Preferences under the Security tab.

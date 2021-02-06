@@ -109,7 +109,7 @@ function patchAndInstall(win, srcFile) {
         entryData = entryData.replace(/^\xEF\xBB\xBF/, "");
         let origData = entryData;
         entryData = entryData.replace(/nsIXULAppInfo\)\.version/g, "nsIXULAppInfo).version.slice(0,0) + \"28.99\"");
-        entryData = entryData.replace(/(Services\.appinfo\.version|xulAppInfo\.version|AppInfo\.version)/gi, "\"28.99\"");
+        entryData = entryData.replace(/(Services\.appinfo\.version|(?:^|\s+|(;|{|\(|\)|=|:|\?|,|-|\+|\*|\/|\&\&|\|\|)\s*?)(?:\w+\.)?(?:xulAppInfo|AppInfo)\.version)/gi, "$2\"28.99\"");
         if (entryData != origData) {
           jsFixArray.push({name: entryPointer,
                            stream: converter.convertToInputStream(entryData),

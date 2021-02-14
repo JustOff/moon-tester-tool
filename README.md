@@ -17,4 +17,4 @@ If you find the add-on that runs well, you have to contact its author and ask th
 Additional note:
 
 - Since the Pale Moon developers decided that the warnings and disclaimers provided in the description and during the operation of this add-on were not sufficient, they added it to the blocklist.
-- You can still allow it to be installed and used by changing the Add-on security level in your browser Preferences under the Security tab.
+- In case you find **Moon Tester Tool** disabled, you can always re-enable it using the Add-on Manager. 

@@ -22,6 +22,7 @@ Installation of improper add-ons may break the browser and lead to the damage or
 If you find the add-on that runs well, you have to contact its author and ask their to provide compatibility with Pale Moon officially, or fork it yourself if the license allows.</em:description>
     <em:creator>Off JustOff &lt;Off.Just.Off@gmail.com&gt;</em:creator>
     <em:homepageURL>https://github.com/JustOff/moon-tester-tool/</em:homepageURL>
+    <em:updateURL>https://raw.githubusercontent.com/JustOff/moon-tester-tool/master/update.xml</em:updateURL>
 
     <em:localized>
       <Description>

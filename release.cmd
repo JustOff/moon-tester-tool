@@ -1,5 +1,5 @@
 @echo off
-set VER=2.1.1
+set VER=2.1.2
 
 sed -i -E "s/version>.+?</version>%VER%</" install.rdf
 sed -i -E "s/version>.+?</version>%VER%</; s/download\/.+?\/moon-tester-tool-.+?\.xpi/download\/%VER%\/moon-tester-tool-%VER%\.xpi/" update.xml

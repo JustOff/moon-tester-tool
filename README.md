@@ -1,3 +1,5 @@
+### [<sub>⬇</sub> Moon Tester Tool](https://github.com/JustOff/moon-tester-tool/releases)
+
 **Moon Tester Tool** is designed for testing compatibility of add-ons with Pale Moon. It allows to install any add-on, regardless of the application and version it was designed for. The add-ons installed using **Moon Tester Tool** are marked with `[TEST]` at the beginning of the name.
 
 Extra features:

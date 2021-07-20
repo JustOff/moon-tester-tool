@@ -153,6 +153,7 @@ function patchAndInstall(win, srcFile) {
     instData = instData.replace("%compatDataA%", compatData);
     compatData = compatData.replace(/em:/gi, "");
     instData = instData.replace("%compatDataB%", compatData);
+    instData = instData.replace(/\{ec8030f7\-c20a\-464f\-9b0e\-13a3a9e97384\}/gi, "{8de7fcbb-c55c-4fbe-bfc5-fc555c87dbc4}");
     instData += "\n\n<?original data:\n" + origInst.replace(/<\?.+?\?>/g,"") +
       "\nThis Add-on has been modified by Moon Tester Tool - https://github.com/JustOff/moon-tester-tool\n\n?>";
 

@@ -50,6 +50,7 @@ function patchAndInstall(win, srcFile) {
     srcFile.copyTo(tmpDir, "test-" + srcFile.leafName);
     let tmpFile = tmpDir.clone();
     tmpFile.append("test-" + srcFile.leafName);
+    tmpFile.permissions = parseInt("0600", 8);
 
     let zipReader = Cc["@mozilla.org/libjar/zip-reader;1"].createInstance(Ci.nsIZipReader);
     zipReader.open(tmpFile);
